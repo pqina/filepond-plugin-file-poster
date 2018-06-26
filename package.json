@@ -1,0 +1,18 @@
+{
+    "name": "filepond-plugin-file-poster",
+    "version": "1.0.0",
+    "description": "File Poster Plugin for FilePond",
+    "homepage": "https://pqina.nl/filepond",
+    "repository": "pqina/filepond-plugin-file-poster",
+    "main": "dist/filepond-plugin-file-poster.js",
+    "browser": "dist/filepond-plugin-file-poster.js",
+    "module": "dist/filepond-plugin-file-poster.esm.js",
+    "license": "MIT",
+    "author": {
+        "name": "PQINA",
+        "url": "https://pqina.nl"
+    },
+    "peerDependencies": {
+        "filepond": "^1.8.2"
+    }
+}
