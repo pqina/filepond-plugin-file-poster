@@ -1,5 +1,5 @@
 /*
- * FilePondPluginFilePoster 1.0.0
+ * FilePondPluginFilePoster 1.1.0
  * Licensed under MIT, https://opensource.org/licenses/MIT
  * Please visit https://pqina.nl/filepond for details.
  */
@@ -41,6 +41,7 @@
           // get item
 
           var item = root.query('GET_ITEM', { id: props.id });
+          if (!item) return;
 
           // get poster
           var poster = item.getMetadata('poster');
@@ -230,6 +231,7 @@
       // we need to get the file data to determine the eventual image size
 
       var item = root.query('GET_ITEM', id);
+      if (!item) return;
 
       // get url to file
       var fileURL = item.getMetadata('poster');
@@ -405,7 +407,7 @@
         var item = query('GET_ITEM', id);
 
         // item could theoretically have been removed in the mean time
-        if (!item || !item.getMetadata('poster')) {
+        if (!item || !item.getMetadata('poster') || item.archived) {
           return;
         }
 
@@ -422,9 +424,6 @@
         var root = _ref2.root,
           props = _ref2.props,
           action = _ref2.action;
-
-        // get item
-        var item = root.query('GET_ITEM', { id: props.id });
 
         // set new height
         var height = root.rect.element.width * (action.height / action.width);

@@ -1,5 +1,5 @@
 /*
- * FilePondPluginFilePoster 1.0.0
+ * FilePondPluginFilePoster 1.1.0
  * Licensed under MIT, https://opensource.org/licenses/MIT
  * Please visit https://pqina.nl/filepond for details.
  */
@@ -27,6 +27,7 @@ const createPosterView = _ =>
 
         // get item
         const item = root.query('GET_ITEM', { id: props.id });
+        if (!item) return;
 
         // get poster
         const poster = item.getMetadata('poster');
@@ -102,6 +103,40 @@ const addGradientSteps = (
   }
 };
 
+const MAX_WIDTH = 10;
+const MAX_HEIGHT = 10;
+
+const calculateAverageColor = image => {
+  const scalar = Math.min(MAX_WIDTH / image.width, MAX_HEIGHT / image.height);
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const width = (canvas.width = Math.ceil(image.width * scalar));
+  const height = (canvas.height = Math.ceil(image.height * scalar));
+  ctx.drawImage(image, 0, 0, width, height);
+  const data = ctx.getImageData(0, 0, width, height).data;
+  const l = data.length;
+
+  let r = 0;
+  let g = 0;
+  let b = 0;
+  let i = 0;
+
+  for (; i < l; i += 4) {
+    r += data[i] * data[i];
+    g += data[i + 1] * data[i + 1];
+    b += data[i + 2] * data[i + 2];
+  }
+
+  r = averageColor(r, l);
+  g = averageColor(g, l);
+  b = averageColor(b, l);
+
+  return { r, g, b };
+};
+
+const averageColor = (c, l) => Math.floor(Math.sqrt(c / (l / 4)));
+
 const drawTemplate = (canvas, width, height, color, alphaTarget) => {
   canvas.width = width;
   canvas.height = height;
@@ -157,14 +192,16 @@ const createPosterWrapperView = _ => {
 
     // we need to get the file data to determine the eventual image size
     const item = root.query('GET_ITEM', id);
+    if (!item) return;
 
-    // get url to file (we'll revoke it later on when done)
+    // get url to file
     const fileURL = item.getMetadata('poster');
 
     // image is now ready
     const previewImageLoaded = data => {
-      // the file url is no longer needed
-      //URL.revokeObjectURL(fileURL);
+      // calculate average image color
+      const averageColor = calculateAverageColor(data);
+      item.setMetadata('color', averageColor);
 
       // the preview is now ready to be drawn
       root.dispatch('DID_FILE_POSTER_LOAD', {
@@ -310,7 +347,7 @@ var plugin$1 = fpAPI => {
       const item = query('GET_ITEM', id);
 
       // item could theoretically have been removed in the mean time
-      if (!item || !item.getMetadata('poster')) {
+      if (!item || !item.getMetadata('poster') || item.archived) {
         return;
       }
 
@@ -324,9 +361,6 @@ var plugin$1 = fpAPI => {
     };
 
     const didCalculatePreviewSize = ({ root, props, action }) => {
-      // get item
-      const item = root.query('GET_ITEM', { id: props.id });
-
       // set new height
       const height = root.rect.element.width * (action.height / action.width);
 
