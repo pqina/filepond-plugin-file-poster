@@ -3,6 +3,8 @@
  * Licensed under MIT, https://opensource.org/licenses/MIT
  * Please visit https://pqina.nl/filepond for details.
  */
+
+/* eslint-disable */
 (function(global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined'
     ? (module.exports = factory())
@@ -128,6 +130,42 @@
     }
   };
 
+  var MAX_WIDTH = 10;
+  var MAX_HEIGHT = 10;
+
+  var calculateAverageColor = function calculateAverageColor(image) {
+    var scalar = Math.min(MAX_WIDTH / image.width, MAX_HEIGHT / image.height);
+
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    var width = (canvas.width = Math.ceil(image.width * scalar));
+    var height = (canvas.height = Math.ceil(image.height * scalar));
+    ctx.drawImage(image, 0, 0, width, height);
+    var data = ctx.getImageData(0, 0, width, height).data;
+    var l = data.length;
+
+    var r = 0;
+    var g = 0;
+    var b = 0;
+    var i = 0;
+
+    for (; i < l; i += 4) {
+      r += data[i] * data[i];
+      g += data[i + 1] * data[i + 1];
+      b += data[i + 2] * data[i + 2];
+    }
+
+    r = averageColor(r, l);
+    g = averageColor(g, l);
+    b = averageColor(b, l);
+
+    return { r: r, g: g, b: b };
+  };
+
+  var averageColor = function averageColor(c, l) {
+    return Math.floor(Math.sqrt(c / (l / 4)));
+  };
+
   var drawTemplate = function drawTemplate(
     canvas,
     width,
@@ -193,13 +231,14 @@
 
       var item = root.query('GET_ITEM', id);
 
-      // get url to file (we'll revoke it later on when done)
+      // get url to file
       var fileURL = item.getMetadata('poster');
 
       // image is now ready
       var previewImageLoaded = function previewImageLoaded(data) {
-        // the file url is no longer needed
-        //URL.revokeObjectURL(fileURL);
+        // calculate average image color
+        var averageColor = calculateAverageColor(data);
+        item.setMetadata('color', averageColor);
 
         // the preview is now ready to be drawn
         root.dispatch('DID_FILE_POSTER_LOAD', {
@@ -413,8 +452,10 @@
     };
   };
 
-  if (typeof navigator !== 'undefined' && document) {
-    // plugin has loaded
+  var isBrowser =
+    typeof window !== 'undefined' && typeof window.document !== 'undefined';
+
+  if (isBrowser && document) {
     document.dispatchEvent(
       new CustomEvent('FilePond:pluginloaded', { detail: plugin$1 })
     );

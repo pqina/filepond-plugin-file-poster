@@ -3,6 +3,8 @@
  * Licensed under MIT, https://opensource.org/licenses/MIT
  * Please visit https://pqina.nl/filepond for details.
  */
+
+/* eslint-disable */
 const IMAGE_SCALE_SPRING_PROPS = {
   type: 'spring',
   stiffness: 0.5,
@@ -352,8 +354,10 @@ var plugin$1 = fpAPI => {
   };
 };
 
-if (typeof navigator !== 'undefined' && document) {
-  // plugin has loaded
+const isBrowser =
+  typeof window !== 'undefined' && typeof window.document !== 'undefined';
+
+if (isBrowser && document) {
   document.dispatchEvent(
     new CustomEvent('FilePond:pluginloaded', { detail: plugin$1 })
   );
