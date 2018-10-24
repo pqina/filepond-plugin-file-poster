@@ -1,5 +1,5 @@
 /*
- * FilePondPluginFilePoster 1.1.0
+ * FilePondPluginFilePoster 1.1.1
  * Licensed under MIT, https://opensource.org/licenses/MIT
  * Please visit https://pqina.nl/filepond for details.
  */
@@ -142,7 +142,12 @@
     var width = (canvas.width = Math.ceil(image.width * scalar));
     var height = (canvas.height = Math.ceil(image.height * scalar));
     ctx.drawImage(image, 0, 0, width, height);
-    var data = ctx.getImageData(0, 0, width, height).data;
+    var data = null;
+    try {
+      data = ctx.getImageData(0, 0, width, height).data;
+    } catch (e) {
+      return null;
+    }
     var l = data.length;
 
     var r = 0;
@@ -214,6 +219,20 @@
     drawTemplate(overlayTemplateSuccess, width, height, [54, 151, 99], 1);
   }
 
+  var loadImage = function loadImage(url) {
+    return new Promise(function(resolve, reject) {
+      var img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = function() {
+        resolve(img);
+      };
+      img.onerror = function(e) {
+        reject(e);
+      };
+      img.src = url;
+    });
+  };
+
   var createPosterWrapperView = function createPosterWrapperView(_) {
     // create overlay view
     var overlay = createPosterOverlayView(_);
@@ -224,8 +243,6 @@
     var didCreatePreviewContainer = function didCreatePreviewContainer(_ref) {
       var root = _ref.root,
         props = _ref.props;
-      var utils = _.utils;
-      var loadImage = utils.loadImage;
       var id = props.id;
 
       // we need to get the file data to determine the eventual image size
@@ -238,7 +255,7 @@
 
       // image is now ready
       var previewImageLoaded = function previewImageLoaded(data) {
-        // calculate average image color
+        // calculate average image color, is in try catch to circumvent any cors errors
         var averageColor = calculateAverageColor(data);
         item.setMetadata('color', averageColor);
 

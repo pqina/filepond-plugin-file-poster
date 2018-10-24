@@ -1,5 +1,5 @@
 /*
- * FilePondPluginFilePoster 1.1.0
+ * FilePondPluginFilePoster 1.1.1
  * Licensed under MIT, https://opensource.org/licenses/MIT
  * Please visit https://pqina.nl/filepond for details.
  */
@@ -114,7 +114,12 @@ const calculateAverageColor = image => {
   const width = (canvas.width = Math.ceil(image.width * scalar));
   const height = (canvas.height = Math.ceil(image.height * scalar));
   ctx.drawImage(image, 0, 0, width, height);
-  const data = ctx.getImageData(0, 0, width, height).data;
+  let data = null;
+  try {
+    data = ctx.getImageData(0, 0, width, height).data;
+  } catch (e) {
+    return null;
+  }
   const l = data.length;
 
   let r = 0;
@@ -178,6 +183,19 @@ if (hasNavigator) {
   drawTemplate(overlayTemplateSuccess, width, height, [54, 151, 99], 1);
 }
 
+const loadImage = url =>
+  new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = () => {
+      resolve(img);
+    };
+    img.onerror = e => {
+      reject(e);
+    };
+    img.src = url;
+  });
+
 const createPosterWrapperView = _ => {
   // create overlay view
   const overlay = createPosterOverlayView(_);
@@ -186,8 +204,6 @@ const createPosterWrapperView = _ => {
    * Write handler for when preview container has been created
    */
   const didCreatePreviewContainer = ({ root, props, action }) => {
-    const { utils } = _;
-    const { loadImage } = utils;
     const { id } = props;
 
     // we need to get the file data to determine the eventual image size
@@ -199,7 +215,7 @@ const createPosterWrapperView = _ => {
 
     // image is now ready
     const previewImageLoaded = data => {
-      // calculate average image color
+      // calculate average image color, is in try catch to circumvent any cors errors
       const averageColor = calculateAverageColor(data);
       item.setMetadata('color', averageColor);
 
