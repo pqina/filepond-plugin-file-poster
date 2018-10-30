@@ -1,5 +1,5 @@
 /*
- * FilePondPluginFilePoster 1.1.1
+ * FilePondPluginFilePoster 1.1.2
  * Licensed under MIT, https://opensource.org/licenses/MIT
  * Please visit https://pqina.nl/filepond for details.
  */
@@ -256,7 +256,11 @@
       // image is now ready
       var previewImageLoaded = function previewImageLoaded(data) {
         // calculate average image color, is in try catch to circumvent any cors errors
-        var averageColor = calculateAverageColor(data);
+        var averageColor = root.query(
+          'GET_FILE_POSTER_CALCULATE_AVERAGE_IMAGE_COLOR'
+        )
+          ? calculateAverageColor(data)
+          : null;
         item.setMetadata('color', averageColor);
 
         // the preview is now ready to be drawn
@@ -463,7 +467,10 @@
     return {
       options: {
         // Enable or disable file poster
-        allowFilePoster: [true, Type.BOOLEAN]
+        allowFilePoster: [true, Type.BOOLEAN],
+
+        // Enables or disables reading average image color
+        filePosterCalculateAverageImageColor: [false, Type.BOOLEAN]
       }
     };
   };

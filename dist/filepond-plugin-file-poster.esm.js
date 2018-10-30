@@ -1,5 +1,5 @@
 /*
- * FilePondPluginFilePoster 1.1.1
+ * FilePondPluginFilePoster 1.1.2
  * Licensed under MIT, https://opensource.org/licenses/MIT
  * Please visit https://pqina.nl/filepond for details.
  */
@@ -216,7 +216,11 @@ const createPosterWrapperView = _ => {
     // image is now ready
     const previewImageLoaded = data => {
       // calculate average image color, is in try catch to circumvent any cors errors
-      const averageColor = calculateAverageColor(data);
+      const averageColor = root.query(
+        'GET_FILE_POSTER_CALCULATE_AVERAGE_IMAGE_COLOR'
+      )
+        ? calculateAverageColor(data)
+        : null;
       item.setMetadata('color', averageColor);
 
       // the preview is now ready to be drawn
@@ -399,7 +403,10 @@ var plugin$1 = fpAPI => {
   return {
     options: {
       // Enable or disable file poster
-      allowFilePoster: [true, Type.BOOLEAN]
+      allowFilePoster: [true, Type.BOOLEAN],
+
+      // Enables or disables reading average image color
+      filePosterCalculateAverageImageColor: [false, Type.BOOLEAN]
     }
   };
 };
