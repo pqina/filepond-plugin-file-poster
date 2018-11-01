@@ -1,5 +1,5 @@
 /*
- * FilePondPluginFilePoster 1.1.2
+ * FilePondPluginFilePoster 1.1.3
  * Licensed under MIT, https://opensource.org/licenses/MIT
  * Please visit https://pqina.nl/filepond for details.
  */
@@ -261,7 +261,7 @@
         )
           ? calculateAverageColor(data)
           : null;
-        item.setMetadata('color', averageColor);
+        item.setMetadata('color', averageColor, true);
 
         // the preview is now ready to be drawn
         root.dispatch('DID_FILE_POSTER_LOAD', {
