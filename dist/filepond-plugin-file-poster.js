@@ -1,5 +1,5 @@
 /*
- * FilePondPluginFilePoster 1.1.3
+ * FilePondPluginFilePoster 2.0.0
  * Licensed under MIT, https://opensource.org/licenses/MIT
  * Please visit https://pqina.nl/filepond for details.
  */
@@ -449,9 +449,11 @@
         // set new height
         var height = root.rect.element.width * (action.height / action.width);
 
-        // set height
-        root.ref.imagePreview.element.style.cssText =
-          'height:' + Math.round(height) + 'px';
+        // time to resize
+        root.dispatch('DID_UPDATE_PANEL_HEIGHT', {
+          id: props.id,
+          height: height
+        });
       };
 
       // start writing
@@ -478,7 +480,7 @@
   var isBrowser =
     typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
-  if (isBrowser && document) {
+  if (isBrowser) {
     document.dispatchEvent(
       new CustomEvent('FilePond:pluginloaded', { detail: plugin$1 })
     );
