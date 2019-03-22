@@ -249,9 +249,7 @@
 
     var didCreatePreviewContainer = function didCreatePreviewContainer(_ref) {
       var root = _ref.root,
-        props = _ref.props,
-        action = _ref.action;
-      var utils = _.utils;
+        props = _ref.props;
       var id = props.id; // we need to get the file data to determine the eventual image size
 
       var item = root.query('GET_ITEM', id);
@@ -335,10 +333,8 @@
 
     var create = function create(_ref7) {
       var root = _ref7.root,
-        props = _ref7.props,
-        dispatch = _ref7.dispatch;
-      var id = props.id; // image view
-
+        props = _ref7.props;
+      // image view
       var image = createPosterView(_); // append image presenter
 
       root.ref.image = root.appendChildView(

@@ -65,8 +65,8 @@ export const createPosterWrapperView = _ => {
     /**
      * Write handler for when preview container has been created
      */
-    const didCreatePreviewContainer = ({ root, props, action }) => {
-        const { utils } = _;
+    const didCreatePreviewContainer = ({ root, props }) => {
+        
         const { id } = props;
 
         // we need to get the file data to determine the eventual image size
@@ -147,8 +147,7 @@ export const createPosterWrapperView = _ => {
     /**
      * Constructor
      */
-    const create = ({ root, props, dispatch }) => {
-        const { id } = props;
+    const create = ({ root, props }) => {
 
         // image view
         const image = createPosterView(_);
