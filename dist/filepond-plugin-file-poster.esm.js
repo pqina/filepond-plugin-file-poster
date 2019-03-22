@@ -1,10 +1,11 @@
-/*
- * FilePondPluginFilePoster 2.0.0
- * Licensed under MIT, https://opensource.org/licenses/MIT
- * Please visit https://pqina.nl/filepond for details.
+/*!
+ * FilePondPluginFilePoster 2.0.1
+ * Licensed under MIT, https://opensource.org/licenses/MIT/
+ * Please visit https://pqina.nl/filepond/ for details.
  */
 
 /* eslint-disable */
+
 const IMAGE_SCALE_SPRING_PROPS = {
   type: 'spring',
   stiffness: 0.5,
@@ -286,6 +287,7 @@ const createPosterWrapperView = _ => {
    * Constructor
    */
   const create = ({ root, props, dispatch }) => {
+    // image view
     const image = createPosterView(_);
 
     // append image presenter
@@ -342,14 +344,14 @@ const createPosterWrapperView = _ => {
 };
 
 /**
- * Image Preview Plugin
+ * File Poster Plugin
  */
-var plugin$1 = fpAPI => {
+const plugin = fpAPI => {
   const { addFilter, utils } = fpAPI;
   const { Type, createRoute } = utils;
 
-  // imagePreviewView
-  const imagePreviewView = createPosterWrapperView(fpAPI);
+  // filePosterView
+  const filePosterView = createPosterWrapperView(fpAPI);
 
   // called for each view that is created right after the 'create' method
   addFilter('CREATE_VIEW', viewAPI => {
@@ -361,7 +363,7 @@ var plugin$1 = fpAPI => {
       return;
     }
 
-    // create the image preview plugin, but only do so if the item is an image
+    // create the file poster plugin, but only do so if the item is an image
     const didLoadItem = ({ root, props, actions }) => {
       const { id } = props;
       const item = query('GET_ITEM', id);
@@ -372,8 +374,8 @@ var plugin$1 = fpAPI => {
       }
 
       // set preview view
-      root.ref.imagePreview = view.appendChildView(
-        view.createChildView(imagePreviewView, { id })
+      root.ref.filePoster = view.appendChildView(
+        view.createChildView(filePosterView, { id })
       );
 
       // now ready
@@ -412,13 +414,13 @@ var plugin$1 = fpAPI => {
   };
 };
 
+// fire pluginloaded event if running in browser, this allows registering the plugin when using async script tags
 const isBrowser =
   typeof window !== 'undefined' && typeof window.document !== 'undefined';
-
 if (isBrowser) {
   document.dispatchEvent(
-    new CustomEvent('FilePond:pluginloaded', { detail: plugin$1 })
+    new CustomEvent('FilePond:pluginloaded', { detail: plugin })
   );
 }
 
-export default plugin$1;
+export default plugin;

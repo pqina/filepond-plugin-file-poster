@@ -1,0 +1,8 @@
+
+.filepond--file-poster-wrapper {
+    z-index: 2;
+}
+
+.filepond--image-preview-wrapper ~ .filepond--file-poster-wrapper {
+    display:none;
+}

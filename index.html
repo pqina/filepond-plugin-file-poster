@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FilePond Plugin File Poster</title>
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+    <link href="./dist/filepond-plugin-file-poster.css" rel="stylesheet">
+</head>
+<body>
+
+    <input type="file"/>
+    
+    <script src="./dist/filepond-plugin-file-poster.js"></script>
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+    
+    <script>
+        // Register the plugin with FilePond
+        FilePond.registerPlugin(FilePondPluginFilePoster);
+
+        // Get a reference to the file input element
+        const inputElement = document.querySelector('input[type="file"]');
+
+        // Create the FilePond instance
+        const pond = FilePond.create(inputElement, {
+            files: [
+                {
+                    // the server file reference
+                    source: '12345',
+
+                    // set type to local to indicate an already uploaded file
+                    options: {
+                        type: 'local',
+
+                        // stub file information
+                        file: {
+                            name: 'my-file.jpeg',
+                            size: 3500000,
+                            type: 'image/jpeg'
+                        },
+
+                        // pass poster property
+                        metadata: {
+                            poster: './poster.jpeg'
+                        }
+                    }
+                }
+            ]
+        });
+    </script>
+
+</body>
+</html>
