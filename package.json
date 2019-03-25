@@ -1,6 +1,6 @@
 {
     "name": "filepond-plugin-file-poster",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "File Poster Plugin for FilePond",
     "license": "MIT",
     "author": {
@@ -13,9 +13,10 @@
     "browser": "dist/filepond-plugin-file-poster.js",
     "module": "dist/filepond-plugin-file-poster.esm.js",
     "browserslist": [
-        "last 3 versions",
-        "edge >= 12",
-        "ie 11"
+        "last 1 version and not Explorer 10",
+        "Explorer 11",
+        "iOS >= 9",
+        "Android >= 4.4"
     ],
     "files": [
         "dist"

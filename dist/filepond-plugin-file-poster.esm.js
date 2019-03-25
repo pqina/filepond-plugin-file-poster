@@ -1,5 +1,5 @@
 /*!
- * FilePondPluginFilePoster 2.0.1
+ * FilePondPluginFilePoster 2.0.2
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
