@@ -44,14 +44,13 @@ const plugin = fpAPI => {
 
         const didCalculatePreviewSize = ({ root, props, action }) => {
 
-            // set new height
-            const height = root.rect.element.width * (action.height / action.width);
+            // remember dimensions
+            root.ref.imageWidth = action.width;
+            root.ref.imageHeight = action.height;
 
-            // time to resize
-            root.dispatch('DID_UPDATE_PANEL_HEIGHT', {
-                id: props.id,
-                height
-            });
+            root.ref.shouldUpdatePanelHeight = true;
+
+            root.dispatch('KICK');
         };
 
         // start writing
@@ -59,6 +58,24 @@ const plugin = fpAPI => {
             createRoute({
                 DID_LOAD_ITEM: didLoadItem,
                 DID_FILE_POSTER_CALCULATE_SIZE: didCalculatePreviewSize
+            }, ({ root, props }) => {
+
+                // don't do anything while hidden
+                if (root.rect.element.hidden) return;
+
+                // should we redraw
+                if (root.ref.shouldUpdatePanelHeight) {
+
+                    // time to resize the parent panel
+                    root.dispatch('DID_UPDATE_PANEL_HEIGHT', {
+                        id: props.id,
+                        height: root.rect.element.width * (root.ref.imageHeight / root.ref.imageWidth)
+                    });
+
+                    // done!
+                    root.ref.shouldUpdatePanelHeight = false;
+                }
+
             })
         );
     });

@@ -1,5 +1,5 @@
 /*!
- * FilePondPluginFilePoster 2.0.2
+ * FilePondPluginFilePoster 2.0.3
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -443,22 +443,44 @@
           props = _ref2.props,
           action = _ref2.action;
 
-        // set new height
-        var height = root.rect.element.width * (action.height / action.width);
+        // remember dimensions
+        root.ref.imageWidth = action.width;
+        root.ref.imageHeight = action.height;
 
-        // time to resize
-        root.dispatch('DID_UPDATE_PANEL_HEIGHT', {
-          id: props.id,
-          height: height
-        });
+        root.ref.shouldUpdatePanelHeight = true;
+
+        root.dispatch('KICK');
       };
 
       // start writing
       view.registerWriter(
-        createRoute({
-          DID_LOAD_ITEM: didLoadItem,
-          DID_FILE_POSTER_CALCULATE_SIZE: didCalculatePreviewSize
-        })
+        createRoute(
+          {
+            DID_LOAD_ITEM: didLoadItem,
+            DID_FILE_POSTER_CALCULATE_SIZE: didCalculatePreviewSize
+          },
+          function(_ref3) {
+            var root = _ref3.root,
+              props = _ref3.props;
+
+            // don't do anything while hidden
+            if (root.rect.element.hidden) return;
+
+            // should we redraw
+            if (root.ref.shouldUpdatePanelHeight) {
+              // time to resize the parent panel
+              root.dispatch('DID_UPDATE_PANEL_HEIGHT', {
+                id: props.id,
+                height:
+                  root.rect.element.width *
+                  (root.ref.imageHeight / root.ref.imageWidth)
+              });
+
+              // done!
+              root.ref.shouldUpdatePanelHeight = false;
+            }
+          }
+        )
       );
     });
 
