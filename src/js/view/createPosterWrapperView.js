@@ -45,9 +45,11 @@ if (hasNavigator) {
     drawTemplate(overlayTemplateSuccess, width, height, [54, 151, 99], 1);
 }
 
-const loadImage = (url) => new Promise((resolve, reject) => {
+const loadImage = (url, crossOriginValue) => new Promise((resolve, reject) => {
     const img = new Image();
-    img.crossOrigin = 'Anonymous';
+    if (typeof crossOrigin === 'string') {
+        img.crossOrigin = crossOriginValue;
+    }
     img.onload = () => {
         resolve(img);
     };
@@ -101,7 +103,7 @@ export const createPosterWrapperView = _ => {
             });
 
             // create fallback preview
-            loadImage(fileURL).then(previewImageLoaded);
+            loadImage(fileURL, root.query('GET_FILE_POSTER_CROSS_ORIGIN_ATTRIBUTE_VALUE')).then(previewImageLoaded);
         
         });
     };
@@ -109,14 +111,14 @@ export const createPosterWrapperView = _ => {
     /**
      * Write handler for when the preview has been loaded
      */
-    const didLoadPreview = ({ root, props }) => {
+    const didLoadPreview = ({ root }) => {
         root.ref.overlayShadow.opacity = 1;
     };
 
     /**
      * Write handler for when the preview image is ready to be animated
      */
-    const didDrawPreview = ({ root, props }) => {
+    const didDrawPreview = ({ root }) => {
         const { image } = root.ref;
 
         // reveal image

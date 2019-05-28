@@ -23,7 +23,7 @@ const plugin = fpAPI => {
         }
 
         // create the file poster plugin, but only do so if the item is an image
-        const didLoadItem = ({ root, props, actions }) => {
+        const didLoadItem = ({ root, props }) => {
 
             const { id } = props;
             const item = query('GET_ITEM', id);
@@ -42,7 +42,7 @@ const plugin = fpAPI => {
             root.dispatch('DID_FILE_POSTER_CONTAINER_CREATE', { id });
         };
 
-        const didCalculatePreviewSize = ({ root, props, action }) => {
+        const didCalculatePreviewSize = ({ root, action }) => {
 
             // remember dimensions
             root.ref.imageWidth = action.width;
@@ -88,7 +88,10 @@ const plugin = fpAPI => {
             allowFilePoster: [true, Type.BOOLEAN],
 
             // Enables or disables reading average image color
-            filePosterCalculateAverageImageColor: [false, Type.BOOLEAN]
+            filePosterCalculateAverageImageColor: [false, Type.BOOLEAN],
+
+            // Allows setting the value of the CORS attribute (null is don't set attribute)
+            filePosterCrossOriginAttributeValue: ['Anonymous', Type.STRING]
         }
     };
 };

@@ -1,5 +1,5 @@
 /*!
- * FilePondPluginFilePoster 2.0.3
+ * FilePondPluginFilePoster 2.1.0
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -29,16 +29,14 @@
       tag: 'div',
       ignoreRect: true,
       create: function create(_ref) {
-        var root = _ref.root,
-          props = _ref.props;
+        var root = _ref.root;
         root.ref.image = document.createElement('img');
         root.element.appendChild(root.ref.image);
       },
       write: _.utils.createRoute({
         DID_FILE_POSTER_LOAD: function DID_FILE_POSTER_LOAD(_ref2) {
           var root = _ref2.root,
-            props = _ref2.props,
-            action = _ref2.action;
+            props = _ref2.props;
           var id = props.id;
 
           // get item
@@ -220,10 +218,12 @@
     drawTemplate(overlayTemplateSuccess, width, height, [54, 151, 99], 1);
   }
 
-  var loadImage = function loadImage(url) {
+  var loadImage = function loadImage(url, crossOriginValue) {
     return new Promise(function(resolve, reject) {
       var img = new Image();
-      img.crossOrigin = 'Anonymous';
+      if (typeof crossOrigin === 'string') {
+        img.crossOrigin = crossOriginValue;
+      }
       img.onload = function() {
         resolve(img);
       };
@@ -280,7 +280,10 @@
         });
 
         // create fallback preview
-        loadImage(fileURL).then(previewImageLoaded);
+        loadImage(
+          fileURL,
+          root.query('GET_FILE_POSTER_CROSS_ORIGIN_ATTRIBUTE_VALUE')
+        ).then(previewImageLoaded);
       });
     };
 
@@ -288,8 +291,7 @@
      * Write handler for when the preview has been loaded
      */
     var didLoadPreview = function didLoadPreview(_ref2) {
-      var root = _ref2.root,
-        props = _ref2.props;
+      var root = _ref2.root;
       root.ref.overlayShadow.opacity = 1;
     };
 
@@ -297,8 +299,7 @@
      * Write handler for when the preview image is ready to be animated
      */
     var didDrawPreview = function didDrawPreview(_ref3) {
-      var root = _ref3.root,
-        props = _ref3.props;
+      var root = _ref3.root;
       var image = root.ref.image;
 
       // reveal image
@@ -419,8 +420,7 @@
       // create the file poster plugin, but only do so if the item is an image
       var didLoadItem = function didLoadItem(_ref) {
         var root = _ref.root,
-          props = _ref.props,
-          actions = _ref.actions;
+          props = _ref.props;
         var id = props.id;
         var item = query('GET_ITEM', id);
 
@@ -440,7 +440,6 @@
 
       var didCalculatePreviewSize = function didCalculatePreviewSize(_ref2) {
         var root = _ref2.root,
-          props = _ref2.props,
           action = _ref2.action;
 
         // remember dimensions
@@ -491,7 +490,10 @@
         allowFilePoster: [true, Type.BOOLEAN],
 
         // Enables or disables reading average image color
-        filePosterCalculateAverageImageColor: [false, Type.BOOLEAN]
+        filePosterCalculateAverageImageColor: [false, Type.BOOLEAN],
+
+        // Allows setting the value of the CORS attribute (null is don't set attribute)
+        filePosterCrossOriginAttributeValue: ['Anonymous', Type.STRING]
       }
     };
   };

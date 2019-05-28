@@ -1,5 +1,5 @@
 /*!
- * FilePondPluginFilePoster 2.0.3
+ * FilePondPluginFilePoster 2.1.0
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -18,12 +18,12 @@ const createPosterView = _ =>
     name: 'file-poster',
     tag: 'div',
     ignoreRect: true,
-    create: ({ root, props }) => {
+    create: ({ root }) => {
       root.ref.image = document.createElement('img');
       root.element.appendChild(root.ref.image);
     },
     write: _.utils.createRoute({
-      DID_FILE_POSTER_LOAD: ({ root, props, action }) => {
+      DID_FILE_POSTER_LOAD: ({ root, props }) => {
         const { id } = props;
 
         // get item
@@ -184,10 +184,12 @@ if (hasNavigator) {
   drawTemplate(overlayTemplateSuccess, width, height, [54, 151, 99], 1);
 }
 
-const loadImage = url =>
+const loadImage = (url, crossOriginValue) =>
   new Promise((resolve, reject) => {
     const img = new Image();
-    img.crossOrigin = 'Anonymous';
+    if (typeof crossOrigin === 'string') {
+      img.crossOrigin = crossOriginValue;
+    }
     img.onload = () => {
       resolve(img);
     };
@@ -241,21 +243,24 @@ const createPosterWrapperView = _ => {
       });
 
       // create fallback preview
-      loadImage(fileURL).then(previewImageLoaded);
+      loadImage(
+        fileURL,
+        root.query('GET_FILE_POSTER_CROSS_ORIGIN_ATTRIBUTE_VALUE')
+      ).then(previewImageLoaded);
     });
   };
 
   /**
    * Write handler for when the preview has been loaded
    */
-  const didLoadPreview = ({ root, props }) => {
+  const didLoadPreview = ({ root }) => {
     root.ref.overlayShadow.opacity = 1;
   };
 
   /**
    * Write handler for when the preview image is ready to be animated
    */
-  const didDrawPreview = ({ root, props }) => {
+  const didDrawPreview = ({ root }) => {
     const { image } = root.ref;
 
     // reveal image
@@ -364,7 +369,7 @@ const plugin = fpAPI => {
     }
 
     // create the file poster plugin, but only do so if the item is an image
-    const didLoadItem = ({ root, props, actions }) => {
+    const didLoadItem = ({ root, props }) => {
       const { id } = props;
       const item = query('GET_ITEM', id);
 
@@ -382,7 +387,7 @@ const plugin = fpAPI => {
       root.dispatch('DID_FILE_POSTER_CONTAINER_CREATE', { id });
     };
 
-    const didCalculatePreviewSize = ({ root, props, action }) => {
+    const didCalculatePreviewSize = ({ root, action }) => {
       // remember dimensions
       root.ref.imageWidth = action.width;
       root.ref.imageHeight = action.height;
@@ -428,7 +433,10 @@ const plugin = fpAPI => {
       allowFilePoster: [true, Type.BOOLEAN],
 
       // Enables or disables reading average image color
-      filePosterCalculateAverageImageColor: [false, Type.BOOLEAN]
+      filePosterCalculateAverageImageColor: [false, Type.BOOLEAN],
+
+      // Allows setting the value of the CORS attribute (null is don't set attribute)
+      filePosterCrossOriginAttributeValue: ['Anonymous', Type.STRING]
     }
   };
 };

@@ -10,12 +10,12 @@ export const createPosterView = _ =>
         name: 'file-poster',
         tag: 'div',
         ignoreRect: true,
-        create: ({ root, props }) => {
+        create: ({ root }) => {
             root.ref.image = document.createElement('img');
             root.element.appendChild(root.ref.image);
         },
         write: _.utils.createRoute({
-            DID_FILE_POSTER_LOAD: ({ root, props, action }) => {
+            DID_FILE_POSTER_LOAD: ({ root, props }) => {
                 const { id } = props;
 
                 // get item
