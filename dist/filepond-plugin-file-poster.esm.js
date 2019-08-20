@@ -1,5 +1,5 @@
 /*!
- * FilePondPluginFilePoster 2.1.0
+ * FilePondPluginFilePoster 2.2.0
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -364,9 +364,7 @@ const plugin = fpAPI => {
     const { is, view, query } = viewAPI;
 
     // only hook up to item view and only if is enabled for this cropper
-    if (!is('file') || !query('GET_ALLOW_FILE_POSTER')) {
-      return;
-    }
+    if (!is('file') || !query('GET_ALLOW_FILE_POSTER')) return;
 
     // create the file poster plugin, but only do so if the item is an image
     const didLoadItem = ({ root, props }) => {
@@ -374,9 +372,10 @@ const plugin = fpAPI => {
       const item = query('GET_ITEM', id);
 
       // item could theoretically have been removed in the mean time
-      if (!item || !item.getMetadata('poster') || item.archived) {
-        return;
-      }
+      if (!item || !item.getMetadata('poster') || item.archived) return;
+
+      // test if is filtered
+      if (!query('GET_FILE_POSTER_FILTER_ITEM')(item)) return;
 
       // set preview view
       root.ref.filePoster = view.appendChildView(
@@ -388,6 +387,9 @@ const plugin = fpAPI => {
     };
 
     const didCalculatePreviewSize = ({ root, action }) => {
+      // no poster set
+      if (!root.ref.filePoster) return;
+
       // remember dimensions
       root.ref.imageWidth = action.width;
       root.ref.imageHeight = action.height;
@@ -405,6 +407,9 @@ const plugin = fpAPI => {
           DID_FILE_POSTER_CALCULATE_SIZE: didCalculatePreviewSize
         },
         ({ root, props }) => {
+          // don't run without poster
+          if (!root.ref.filePoster) return;
+
           // don't do anything while hidden
           if (root.rect.element.hidden) return;
 
@@ -431,6 +436,9 @@ const plugin = fpAPI => {
     options: {
       // Enable or disable file poster
       allowFilePoster: [true, Type.BOOLEAN],
+
+      // filters file items to determine which are shown as poster
+      filePosterFilterItem: [() => true, Type.FUNCTION],
 
       // Enables or disables reading average image color
       filePosterCalculateAverageImageColor: [false, Type.BOOLEAN],
