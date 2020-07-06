@@ -55,6 +55,26 @@ const plugin = fpAPI => {
             root.dispatch('KICK');
         };
 
+        const getPosterHeight = ({ root }) => {
+            let fixedPosterHeight = root.query('GET_FILE_POSTER_HEIGHT');
+
+            // if fixed height: return fixed immediately
+            if (fixedPosterHeight) { return fixedPosterHeight; }
+
+            const minPosterHeight = root.query('GET_FILE_POSTER_MIN_HEIGHT');
+            const maxPosterHeight = root.query('GET_FILE_POSTER_MAX_HEIGHT');
+
+            // if natural height is smaller than minHeight: return min height
+            if (minPosterHeight && root.ref.imageHeight < minPosterHeight) { return minPosterHeight; }
+
+            let height = root.rect.element.width * (root.ref.imageHeight / root.ref.imageWidth);
+
+            if (minPosterHeight && height < minPosterHeight) { return minPosterHeight; }
+            if (maxPosterHeight && height > maxPosterHeight) { return maxPosterHeight; }
+
+            return height;
+        };
+
         // start writing
         view.registerWriter(
             createRoute({
@@ -74,7 +94,7 @@ const plugin = fpAPI => {
                     // time to resize the parent panel
                     root.dispatch('DID_UPDATE_PANEL_HEIGHT', {
                         id: props.id,
-                        height: root.rect.element.width * (root.ref.imageHeight / root.ref.imageWidth)
+                        height: getPosterHeight({ root })
                     });
 
                     // done!
@@ -91,6 +111,15 @@ const plugin = fpAPI => {
 
             // Enable or disable file poster
             allowFilePoster: [true, Type.BOOLEAN],
+
+            // Fixed preview height
+            filePosterHeight: [null, Type.INT],
+
+            // Min image height
+            filePosterMinHeight: [null, Type.INT],
+
+            // Max image height
+            filePosterMaxHeight: [null, Type.INT],
 
             // filters file items to determine which are shown as poster
             filePosterFilterItem: [() => true, Type.FUNCTION],

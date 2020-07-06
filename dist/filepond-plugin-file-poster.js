@@ -453,6 +453,37 @@
         root.dispatch('KICK');
       };
 
+      var getPosterHeight = function getPosterHeight(_ref3) {
+        var root = _ref3.root;
+        var fixedPosterHeight = root.query('GET_FILE_POSTER_HEIGHT');
+
+        // if fixed height: return fixed immediately
+        if (fixedPosterHeight) {
+          return fixedPosterHeight;
+        }
+
+        var minPosterHeight = root.query('GET_FILE_POSTER_MIN_HEIGHT');
+        var maxPosterHeight = root.query('GET_FILE_POSTER_MAX_HEIGHT');
+
+        // if natural height is smaller than minHeight: return min height
+        if (minPosterHeight && root.ref.imageHeight < minPosterHeight) {
+          return minPosterHeight;
+        }
+
+        var height =
+          root.rect.element.width *
+          (root.ref.imageHeight / root.ref.imageWidth);
+
+        if (minPosterHeight && height < minPosterHeight) {
+          return minPosterHeight;
+        }
+        if (maxPosterHeight && height > maxPosterHeight) {
+          return maxPosterHeight;
+        }
+
+        return height;
+      };
+
       // start writing
       view.registerWriter(
         createRoute(
@@ -460,9 +491,9 @@
             DID_LOAD_ITEM: didLoadItem,
             DID_FILE_POSTER_CALCULATE_SIZE: didCalculatePreviewSize
           },
-          function(_ref3) {
-            var root = _ref3.root,
-              props = _ref3.props;
+          function(_ref4) {
+            var root = _ref4.root,
+              props = _ref4.props;
 
             // don't run without poster
             if (!root.ref.filePoster) return;
@@ -475,9 +506,7 @@
               // time to resize the parent panel
               root.dispatch('DID_UPDATE_PANEL_HEIGHT', {
                 id: props.id,
-                height:
-                  root.rect.element.width *
-                  (root.ref.imageHeight / root.ref.imageWidth)
+                height: getPosterHeight({ root: root })
               });
 
               // done!
@@ -493,6 +522,15 @@
       options: {
         // Enable or disable file poster
         allowFilePoster: [true, Type.BOOLEAN],
+
+        // Fixed preview height
+        filePosterHeight: [null, Type.INT],
+
+        // Min image height
+        filePosterMinHeight: [44, Type.INT],
+
+        // Max image height
+        filePosterMaxHeight: [256, Type.INT],
 
         // filters file items to determine which are shown as poster
         filePosterFilterItem: [
