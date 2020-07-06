@@ -1,5 +1,5 @@
 /*!
- * FilePondPluginFilePoster 2.2.0
+ * FilePondPluginFilePoster 2.3.0
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -527,10 +527,10 @@
         filePosterHeight: [null, Type.INT],
 
         // Min image height
-        filePosterMinHeight: [44, Type.INT],
+        filePosterMinHeight: [null, Type.INT],
 
         // Max image height
-        filePosterMaxHeight: [256, Type.INT],
+        filePosterMaxHeight: [null, Type.INT],
 
         // filters file items to determine which are shown as poster
         filePosterFilterItem: [
