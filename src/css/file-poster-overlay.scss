@@ -14,17 +14,17 @@
     user-select: none;
 }
 
-// success (is second canvas)
+/* success (is second canvas) */
 .filepond--file-poster-overlay:nth-of-type(2) {
     mix-blend-mode: normal;
 }
 
-// error (is third canvas)
+/* error (is third canvas) */
 .filepond--file-poster-overlay:nth-of-type(3) {
     mix-blend-mode: normal;
 }
 
-// disable for Safari as mix-blend-mode causes the overflow:hidden of the parent container to not work
+/* disable for Safari as mix-blend-mode causes the overflow:hidden of the parent container to not work */
 @supports (-webkit-marquee-repetition: infinite) and (object-fit: fill) {
     .filepond--file-poster-overlay {
         mix-blend-mode: normal;
