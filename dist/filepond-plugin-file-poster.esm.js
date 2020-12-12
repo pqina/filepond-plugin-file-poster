@@ -1,5 +1,5 @@
 /*!
- * FilePondPluginFilePoster 2.3.1
+ * FilePondPluginFilePoster 2.4.0
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -368,6 +368,15 @@ const plugin = fpAPI => {
 
     // create the file poster plugin, but only do so if the item is an image
     const didLoadItem = ({ root, props }) => {
+      updateItemPoster(root, props);
+    };
+
+    const didUpdateItemMetadata = ({ root, props, action }) => {
+      if (!/poster/.test(action.change.key)) return;
+      updateItemPoster(root, props);
+    };
+
+    const updateItemPoster = (root, props) => {
       const { id } = props;
       const item = query('GET_ITEM', id);
 
@@ -376,6 +385,10 @@ const plugin = fpAPI => {
 
       // test if is filtered
       if (!query('GET_FILE_POSTER_FILTER_ITEM')(item)) return;
+
+      if (root.ref.filePoster) {
+        view.removeChildView(root.ref.filePoster);
+      }
 
       // set preview view
       root.ref.filePoster = view.appendChildView(
@@ -433,7 +446,8 @@ const plugin = fpAPI => {
       createRoute(
         {
           DID_LOAD_ITEM: didLoadItem,
-          DID_FILE_POSTER_CALCULATE_SIZE: didCalculatePreviewSize
+          DID_FILE_POSTER_CALCULATE_SIZE: didCalculatePreviewSize,
+          DID_UPDATE_ITEM_METADATA: didUpdateItemMetadata
         },
         ({ root, props }) => {
           // don't run without poster

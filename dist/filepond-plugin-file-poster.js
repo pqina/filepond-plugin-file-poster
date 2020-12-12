@@ -1,5 +1,5 @@
 /*!
- * FilePondPluginFilePoster 2.3.1
+ * FilePondPluginFilePoster 2.4.0
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -419,6 +419,18 @@
       var didLoadItem = function didLoadItem(_ref) {
         var root = _ref.root,
           props = _ref.props;
+        updateItemPoster(root, props);
+      };
+
+      var didUpdateItemMetadata = function didUpdateItemMetadata(_ref2) {
+        var root = _ref2.root,
+          props = _ref2.props,
+          action = _ref2.action;
+        if (!/poster/.test(action.change.key)) return;
+        updateItemPoster(root, props);
+      };
+
+      var updateItemPoster = function updateItemPoster(root, props) {
         var id = props.id;
         var item = query('GET_ITEM', id);
 
@@ -427,6 +439,10 @@
 
         // test if is filtered
         if (!query('GET_FILE_POSTER_FILTER_ITEM')(item)) return;
+
+        if (root.ref.filePoster) {
+          view.removeChildView(root.ref.filePoster);
+        }
 
         // set preview view
         root.ref.filePoster = view.appendChildView(
@@ -437,9 +453,9 @@
         root.dispatch('DID_FILE_POSTER_CONTAINER_CREATE', { id: id });
       };
 
-      var didCalculatePreviewSize = function didCalculatePreviewSize(_ref2) {
-        var root = _ref2.root,
-          action = _ref2.action;
+      var didCalculatePreviewSize = function didCalculatePreviewSize(_ref3) {
+        var root = _ref3.root,
+          action = _ref3.action;
 
         // no poster set
         if (!root.ref.filePoster) return;
@@ -453,8 +469,8 @@
         root.dispatch('KICK');
       };
 
-      var getPosterHeight = function getPosterHeight(_ref3) {
-        var root = _ref3.root;
+      var getPosterHeight = function getPosterHeight(_ref4) {
+        var root = _ref4.root;
         var fixedPosterHeight = root.query('GET_FILE_POSTER_HEIGHT');
 
         // if fixed height: return fixed immediately
@@ -489,11 +505,12 @@
         createRoute(
           {
             DID_LOAD_ITEM: didLoadItem,
-            DID_FILE_POSTER_CALCULATE_SIZE: didCalculatePreviewSize
+            DID_FILE_POSTER_CALCULATE_SIZE: didCalculatePreviewSize,
+            DID_UPDATE_ITEM_METADATA: didUpdateItemMetadata
           },
-          function(_ref4) {
-            var root = _ref4.root,
-              props = _ref4.props;
+          function(_ref5) {
+            var root = _ref5.root,
+              props = _ref5.props;
 
             // don't run without poster
             if (!root.ref.filePoster) return;
