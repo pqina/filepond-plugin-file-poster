@@ -22,5 +22,5 @@ declare module "filepond-plugin-file-poster" {
         /** Allows setting the value of the CORS attribute (null is don't set attribute) */
         filePosterCrossOriginAttributeValue?: string;
     }
-    export default FilePondPluginImagePreview;
+    export default FilePondPluginFilePoster;
 }
