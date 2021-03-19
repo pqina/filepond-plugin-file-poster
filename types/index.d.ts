@@ -1,26 +1,27 @@
-declare module "filepond-plugin-file-poster" {
-    const FilePondPluginFilePoster: FilePondPluginFilePosterProps;
-    export interface FilePondPluginFilePosterProps {
-        /** Enable or disable file poster */
-        allowFilePoster?: boolean;
+// @ts-ignore
+import { FilePondOptions } from "filepond";
 
-        /** Fixed poster height */
-        filePosterHeight?: number;
+declare module "filepond" {
+  export interface FilePondOptions {
+    /** Enable or disable file poster */
+    allowFilePoster?: boolean;
 
-        /** Min poster height */
-        filePosterMinHeight?: number;
+    /** Fixed poster height */
+    filePosterHeight?: number;
 
-        /** Max poster height */
-        filePosterMaxHeight?: number;
+    /** Min poster height */
+    filePosterMinHeight?: number;
 
-        /** filters file items to determine which are shown as poster */
-        filePosterFilterItem?: () => true;
+    /** Max poster height */
+    filePosterMaxHeight?: number;
 
-        /** Enables or disables reading average image color */
-        filePosterCalculateAverageImageColor?: boolean;
+    /** filters file items to determine which are shown as poster */
+    filePosterFilterItem?: () => true;
 
-        /** Allows setting the value of the CORS attribute (null is don't set attribute) */
-        filePosterCrossOriginAttributeValue?: string;
-    }
-    export default FilePondPluginFilePoster;
+    /** Enables or disables reading average image color */
+    filePosterCalculateAverageImageColor?: boolean;
+
+    /** Allows setting the value of the CORS attribute (null is don't set attribute) */
+    filePosterCrossOriginAttributeValue?: string;
+  }
 }
