@@ -1,5 +1,5 @@
 /*!
- * FilePondPluginFilePoster 2.4.2
+ * FilePondPluginFilePoster 2.4.3
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -29,6 +29,9 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+
+  /* fixes chrome bug */
+  aspect-ratio: auto;
 }
 
 /* success (is second canvas) */
