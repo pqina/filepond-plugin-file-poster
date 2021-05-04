@@ -1,5 +1,5 @@
 /*!
- * FilePondPluginFilePoster 2.4.3
+ * FilePondPluginFilePoster 2.4.4
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -92,4 +92,52 @@
   margin: 0 auto;
   display: block;
   will-change: transform;
+}
+.filepond--root[data-style-panel-layout~='integrated']
+  .filepond--file-poster-wrapper {
+  border-radius: 0;
+}
+.filepond--root[data-style-panel-layout~='integrated'] .filepond--file-poster {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.filepond--root[data-style-panel-layout~='circle']
+  .filepond--file-poster-wrapper {
+  border-radius: 99999rem;
+}
+.filepond--root[data-style-panel-layout~='circle']
+  .filepond--file-poster-overlay {
+  top: auto;
+  bottom: 0;
+  -webkit-transform: scaleY(-1);
+  transform: scaleY(-1);
+}
+.filepond--root[data-style-panel-layout~='circle']
+  .filepond--file
+  .filepond--file-action-button[data-align*='bottom']:not([data-align*='center']) {
+  margin-bottom: 0.325em;
+}
+.filepond--root[data-style-panel-layout~='circle']
+  .filepond--file
+  [data-align*='left'] {
+  left: calc(50% - 3em);
+}
+.filepond--root[data-style-panel-layout~='circle']
+  .filepond--file
+  [data-align*='right'] {
+  right: calc(50% - 3em);
+}
+.filepond--root[data-style-panel-layout~='circle']
+  .filepond--progress-indicator[data-align*='bottom'][data-align*='left'],
+.filepond--root[data-style-panel-layout~='circle']
+  .filepond--progress-indicator[data-align*='bottom'][data-align*='right'] {
+  margin-bottom: calc(0.325em + 0.1875em);
+}
+.filepond--root[data-style-panel-layout~='circle']
+  .filepond--progress-indicator[data-align*='bottom'][data-align*='center'] {
+  margin-top: 0;
+  margin-bottom: 0.1875em;
+  margin-left: 0.1875em;
 }
