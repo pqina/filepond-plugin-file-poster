@@ -1,5 +1,5 @@
 /*!
- * FilePondPluginFilePoster 2.4.4
+ * FilePondPluginFilePoster 2.5.0
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -178,10 +178,14 @@ const overlayTemplateShadow = hasNavigator && document.createElement('canvas');
 const overlayTemplateError = hasNavigator && document.createElement('canvas');
 const overlayTemplateSuccess = hasNavigator && document.createElement('canvas');
 
+let itemShadowColor = [40, 40, 40];
+let itemErrorColor = [196, 78, 71];
+let itemSuccessColor = [54, 151, 99];
+
 if (hasNavigator) {
-  drawTemplate(overlayTemplateShadow, width, height, [40, 40, 40], 0.85);
-  drawTemplate(overlayTemplateError, width, height, [196, 78, 71], 1);
-  drawTemplate(overlayTemplateSuccess, width, height, [54, 151, 99], 1);
+  drawTemplate(overlayTemplateShadow, width, height, itemShadowColor, 0.85);
+  drawTemplate(overlayTemplateError, width, height, itemErrorColor, 1);
+  drawTemplate(overlayTemplateSuccess, width, height, itemSuccessColor, 1);
 }
 
 const loadImage = (url, crossOriginValue) =>
@@ -292,6 +296,30 @@ const createPosterWrapperView = _ => {
    * Constructor
    */
   const create = ({ root, props }) => {
+    // test if colors aren't default item overlay colors
+    const itemShadowColorProp = root.query(
+      'GET_FILE_POSTER_ITEM_OVERLAY_SHADOW_COLOR'
+    );
+    const itemErrorColorProp = root.query(
+      'GET_FILE_POSTER_ITEM_OVERLAY_ERROR_COLOR'
+    );
+    const itemSuccessColorProp = root.query(
+      'GET_FILE_POSTER_ITEM_OVERLAY_SUCCESS_COLOR'
+    );
+
+    if (itemShadowColorProp && itemShadowColorProp !== itemShadowColor) {
+      itemShadowColor = itemShadowColorProp;
+      drawTemplate(overlayTemplateShadow, width, height, itemShadowColor, 0.85);
+    }
+    if (itemErrorColorProp && itemErrorColorProp !== itemErrorColor) {
+      itemErrorColor = itemErrorColorProp;
+      drawTemplate(overlayTemplateError, width, height, itemErrorColor, 1);
+    }
+    if (itemSuccessColorProp && itemSuccessColorProp !== itemSuccessColor) {
+      itemSuccessColor = itemSuccessColorProp;
+      drawTemplate(overlayTemplateSuccess, width, height, itemSuccessColor, 1);
+    }
+
     // image view
     const image = createPosterView(_);
 
@@ -494,7 +522,12 @@ const plugin = fpAPI => {
       filePosterCalculateAverageImageColor: [false, Type.BOOLEAN],
 
       // Allows setting the value of the CORS attribute (null is don't set attribute)
-      filePosterCrossOriginAttributeValue: ['Anonymous', Type.STRING]
+      filePosterCrossOriginAttributeValue: ['Anonymous', Type.STRING],
+
+      // Colors used for item overlay gradient
+      filePosterItemOverlayShadowColor: [null, Type.ARRAY],
+      filePosterItemOverlayErrorColor: [null, Type.ARRAY],
+      filePosterItemOverlaySuccessColor: [null, Type.ARRAY]
     }
   };
 };

@@ -1,5 +1,5 @@
 /*!
- * FilePondPluginFilePoster 2.4.4
+ * FilePondPluginFilePoster 2.5.0
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -212,10 +212,14 @@
   var overlayTemplateError = hasNavigator && document.createElement('canvas');
   var overlayTemplateSuccess = hasNavigator && document.createElement('canvas');
 
+  var itemShadowColor = [40, 40, 40];
+  var itemErrorColor = [196, 78, 71];
+  var itemSuccessColor = [54, 151, 99];
+
   if (hasNavigator) {
-    drawTemplate(overlayTemplateShadow, width, height, [40, 40, 40], 0.85);
-    drawTemplate(overlayTemplateError, width, height, [196, 78, 71], 1);
-    drawTemplate(overlayTemplateSuccess, width, height, [54, 151, 99], 1);
+    drawTemplate(overlayTemplateShadow, width, height, itemShadowColor, 0.85);
+    drawTemplate(overlayTemplateError, width, height, itemErrorColor, 1);
+    drawTemplate(overlayTemplateSuccess, width, height, itemSuccessColor, 1);
   }
 
   var loadImage = function loadImage(url, crossOriginValue) {
@@ -336,6 +340,43 @@
     var create = function create(_ref7) {
       var root = _ref7.root,
         props = _ref7.props;
+      // test if colors aren't default item overlay colors
+      var itemShadowColorProp = root.query(
+        'GET_FILE_POSTER_ITEM_OVERLAY_SHADOW_COLOR'
+      );
+
+      var itemErrorColorProp = root.query(
+        'GET_FILE_POSTER_ITEM_OVERLAY_ERROR_COLOR'
+      );
+
+      var itemSuccessColorProp = root.query(
+        'GET_FILE_POSTER_ITEM_OVERLAY_SUCCESS_COLOR'
+      );
+
+      if (itemShadowColorProp && itemShadowColorProp !== itemShadowColor) {
+        itemShadowColor = itemShadowColorProp;
+        drawTemplate(
+          overlayTemplateShadow,
+          width,
+          height,
+          itemShadowColor,
+          0.85
+        );
+      }
+      if (itemErrorColorProp && itemErrorColorProp !== itemErrorColor) {
+        itemErrorColor = itemErrorColorProp;
+        drawTemplate(overlayTemplateError, width, height, itemErrorColor, 1);
+      }
+      if (itemSuccessColorProp && itemSuccessColorProp !== itemSuccessColor) {
+        itemSuccessColor = itemSuccessColorProp;
+        drawTemplate(
+          overlayTemplateSuccess,
+          width,
+          height,
+          itemSuccessColor,
+          1
+        );
+      }
 
       // image view
       var image = createPosterView(_);
@@ -456,7 +497,6 @@
       var didCalculatePreviewSize = function didCalculatePreviewSize(_ref3) {
         var root = _ref3.root,
           action = _ref3.action;
-
         // no poster set
         if (!root.ref.filePoster) return;
 
@@ -508,10 +548,10 @@
             DID_FILE_POSTER_CALCULATE_SIZE: didCalculatePreviewSize,
             DID_UPDATE_ITEM_METADATA: didUpdateItemMetadata
           },
+
           function(_ref5) {
             var root = _ref5.root,
               props = _ref5.props;
-
             // don't run without poster
             if (!root.ref.filePoster) return;
 
@@ -561,7 +601,12 @@
         filePosterCalculateAverageImageColor: [false, Type.BOOLEAN],
 
         // Allows setting the value of the CORS attribute (null is don't set attribute)
-        filePosterCrossOriginAttributeValue: ['Anonymous', Type.STRING]
+        filePosterCrossOriginAttributeValue: ['Anonymous', Type.STRING],
+
+        // Colors used for item overlay gradient
+        filePosterItemOverlayShadowColor: [null, Type.ARRAY],
+        filePosterItemOverlayErrorColor: [null, Type.ARRAY],
+        filePosterItemOverlaySuccessColor: [null, Type.ARRAY]
       }
     };
   };

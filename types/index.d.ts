@@ -23,5 +23,14 @@ declare module "filepond" {
 
     /** Allows setting the value of the CORS attribute (null is don't set attribute) */
     filePosterCrossOriginAttributeValue?: string;
+
+    /** Allows setting the shadow overlay color expects three numbers between 0 and 255 */
+    filePosterItemOverlayShadowColor?: number[];
+
+    /** Allows setting the error overlay color expects three numbers between 0 and 255 */
+    filePosterItemOverlayErrorColor?: number[];
+
+    /** Allows setting the success overlay color expects three numbers between 0 and 255 */
+    filePosterItemOverlaySuccessColor?: number[];
   }
 }
