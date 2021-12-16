@@ -35,6 +35,10 @@ const plugin = (fpAPI) => {
       // item could theoretically have been removed in the mean time
       if (!item || !item.getMetadata("poster") || item.archived) return;
 
+      // don't update if is the same poster
+      if (root.ref.previousPoster === item.getMetadata("poster")) return;
+      root.ref.previousPoster = item.getMetadata("poster");
+
       // test if is filtered
       if (!query("GET_FILE_POSTER_FILTER_ITEM")(item)) return;
 
