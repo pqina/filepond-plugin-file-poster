@@ -204,19 +204,23 @@
   };
 
   var hasNavigator = typeof navigator !== 'undefined';
+  var hasDocument = typeof document !== 'undefined';
 
   var width = 500;
   var height = 200;
 
-  var overlayTemplateShadow = hasNavigator && document.createElement('canvas');
-  var overlayTemplateError = hasNavigator && document.createElement('canvas');
-  var overlayTemplateSuccess = hasNavigator && document.createElement('canvas');
+  var overlayTemplateShadow =
+    hasNavigator && hasDocument && document.createElement('canvas');
+  var overlayTemplateError =
+    hasNavigator && hasDocument && document.createElement('canvas');
+  var overlayTemplateSuccess =
+    hasNavigator && hasDocument && document.createElement('canvas');
 
   var itemShadowColor = [40, 40, 40];
   var itemErrorColor = [196, 78, 71];
   var itemSuccessColor = [54, 151, 99];
 
-  if (hasNavigator) {
+  if (hasNavigator && hasDocument) {
     drawTemplate(overlayTemplateShadow, width, height, itemShadowColor, 0.85);
     drawTemplate(overlayTemplateError, width, height, itemErrorColor, 1);
     drawTemplate(overlayTemplateSuccess, width, height, itemSuccessColor, 1);
